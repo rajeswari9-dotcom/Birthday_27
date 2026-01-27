@@ -3,148 +3,154 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💌 Birthday Surprise</title>
+<title>Birthday Surprise</title>
 
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  background: #0b1d59; /* dark blue */
+  background: #0b1d59;
   font-family: Georgia, serif;
+  overflow: hidden;
+  color: white;
+}
+
+/* Center container */
+.container {
+  min-height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  overflow: hidden;
-  padding: 10px;
-}
-
-.container {
   text-align: center;
-  width: 100%;
-  max-width: 400px;
 }
 
+/* Envelope */
 #envelope {
-  width: 70vw;
-  max-width: 260px;
-  height: 40vw;
-  max-height: 160px;
+  width: 260px;
+  height: 160px;
   background: #f2b6c2;
   border-radius: 12px;
-  margin: auto;
   cursor: pointer;
   position: relative;
 }
-
 #envelope::before {
   content: "";
   position: absolute;
   top: 0;
-  left: 0;
-  border-left: 35vw solid transparent;
-  border-right: 35vw solid transparent;
-  border-top: 20vw solid #e59aaa;
+  border-left: 130px solid transparent;
+  border-right: 130px solid transparent;
+  border-top: 80px solid #e59aaa;
 }
 
-#hint {
-  margin-top: 15px;
-  color: #fff;
-  font-size: 4vw;
-}
+#hint { margin-top: 12px; }
 
+/* Message */
 #message {
-  display: none;
+  max-width: 80%;
   font-size: 4vw;
   line-height: 1.6;
-  word-wrap: break-word;
-  color: #fff;
 }
 
-.big { font-size: 6vw; font-weight: bold; }
+.big { font-size: 6vw; }
 .small { font-size: 3.5vw; opacity: 0.7; }
 
-.fade-in { animation: fadeIn 0.8s forwards; }
-.fade-out { animation: fadeOut 0.8s forwards; }
-
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-
-.heart {
-  position: fixed;
-  bottom: -20px;
-  font-size: 5vw;
-  animation: float 5s linear infinite;
-}
-
-@keyframes float { to { transform: translateY(-100vh); opacity: 0; } }
-
-/* Postcard style */
-#postcard {
-  display: none;
-  position: fixed;
-  top: 50%;
-  right: 10%;
-  transform: translateY(-50%) scale(0);
-  background: #ffccd9; /* baby pink */
-  border: 2px solid #ff99b3;
-  padding: 25px 35px;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+/* Buttons */
+#questionContainer { display: none; margin-top: 20px; }
+.button {
+  padding: 10px 18px;
+  margin: 8px;
+  background: #ff99b3;
+  border: none;
+  border-radius: 8px;
   font-size: 4vw;
-  color: #5a3e36;
-  text-align: center;
-  transition: transform 1s ease, opacity 1s ease;
-  z-index: 20;
+  cursor: pointer;
 }
 
-#postcard.show {
-  transform: translateY(-50%) scale(1);
-  opacity: 1;
-}
-
-/* Birthday wish position */
+/* Birthday */
 #finalMessage {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(1);
-  transition: all 1s ease;
-  z-index: 15;
-  text-align: center;
-  color: #fff;
-  max-width: 50vw;
+  transform: translate(-50%, -50%);
+  font-size: 6vw;
+  z-index: 20;
 }
 
-/* Question buttons */
-#questionContainer {
-  display: none;
-  margin-top: 15px;
-}
-.button {
-  background: #ff99b3;
-  border: none;
-  padding: 10px 15px;
-  margin: 5px;
-  border-radius: 8px;
-  font-size: 3vw;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-.button:hover { transform: scale(1.1); }
+/* Photo */
+.hidden { display: none; }
 
-@media (max-width: 600px) {
-  #postcard { font-size: 5vw; padding: 20px; right: 5%; }
-  #finalMessage { font-size: 5vw; max-width: 45vw; }
-  .button { font-size: 4vw; padding: 8px 12px; }
+#photoContainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 25;
+}
+#photoContainer img {
+  max-width: 180px;
+  width: 100%;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+@media (min-width: 768px) {
+  #photoContainer img {
+    max-width: 240px;
+  }
+}
+
+
+/* After song text */
+#afterSong {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 4vw;
+  z-index: 30;
+}
+
+/* Hearts */
+.heart {
+  position: fixed;
+  bottom: -20px;
+  animation: float 6s linear infinite;
+}
+@keyframes float {
+  to { transform: translateY(-120vh); opacity: 0; }
+}
+
+/* Window flow (final fade) */
+.windowFlow {
+  animation: flowRight 5s forwards;
+}
+
+@keyframes flowRight {
+  to {
+    transform: translateX(120px);
+    opacity: 0;
+  }
+}
+
+/* Miss you */
+#missYou {
+  position: fixed;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2vw;
+  opacity: 0.7;
+  z-index: 40;
 }
 </style>
 </head>
 
 <body>
+
 <div class="container">
   <div id="envelope"></div>
-  <div id="hint">tap to open 💌</div>
+  <div id="hint">Tap to open 💌</div>
   <div id="message"></div>
 
   <div id="questionContainer">
@@ -153,115 +159,126 @@ body {
     <button class="button" id="noBtn">No</button>
   </div>
 
-  <audio id="music" src="about-you.mp3" preload="auto"></audio>
+  <audio id="music" src="about-you.mp3"></audio>
 </div>
 
-<div id="postcard">
-  You deserve every good thing in the world ❤️<br>
-  Stay as crazy as you are! 💙
+<div id="photoContainer" class="hidden">
+  <img src="him.jpg">
 </div>
+
+<div id="afterSong" class="hidden">
+  You can have this song from now on,<br>
+  as I’m gonna hate this song from now on anyway.
+</div>
+
+<div id="missYou" class="hidden">I miss you</div>
 
 <script>
 const lines = [
-  "To the boy who broke my heart 😤",
+  "To the boy who broke my heart 💔",
   "I hope you become bald in the next 2 years 👿, so no one’s gonna marry you 😌",
   "<div class='big'>I’m just kidding 🤪</div>",
-  "<div class='small'>No, I’m not 🫩"
+  "<div class='small'>No, I’m not 🫩</div>"
 ];
 
 let i = 0;
 const envelope = document.getElementById("envelope");
 const hint = document.getElementById("hint");
 const message = document.getElementById("message");
+const question = document.getElementById("questionContainer");
 const music = document.getElementById("music");
-const postcard = document.getElementById("postcard");
-const questionContainer = document.getElementById("questionContainer");
-const yesBtn = document.getElementById("yesBtn");
-const noBtn = document.getElementById("noBtn");
 
-envelope.addEventListener("click", () => {
+envelope.onclick = () => {
   envelope.style.display = "none";
   hint.style.display = "none";
-  message.style.display = "block";
-  music.play().catch(() => console.log("User interaction needed to play music."));
+  music.play();
   showLine();
-});
+};
 
 function showLine() {
   if (i >= lines.length) {
-    questionContainer.style.display = "block";
+    message.innerHTML = "";
+    question.style.display = "block";
     return;
   }
-  const lineDiv = document.createElement("div");
-  lineDiv.className = "fade-in";
-  lineDiv.innerHTML = lines[i];
-  message.appendChild(lineDiv);
-  i++;
-  setTimeout(() => { lineDiv.classList.add("fade-out"); }, 4000);
-  setTimeout(() => { message.innerHTML = ""; showLine(); }, 5000);
+  message.innerHTML = lines[i++];
+  setTimeout(showLine, 5000);
 }
 
-// Shared function for Yes/No response
-function continueToAnyway(responseText) {
-  questionContainer.style.display = "none";
-  message.innerHTML = `<div class='fade-in'>${responseText}</div>`;
-  
-  // Keep response visible for 10s
-  setTimeout(() => anyway(), 10000);
+document.getElementById("yesBtn").onclick = () =>
+  continueFlow("I knew it,idiot 😤I hate you more than you do ");
+
+document.getElementById("noBtn").onclick = () =>
+  continueFlow("Don’t lie, I know you hate me😒 just admit it already 😏");
+
+function continueFlow(text) {
+  question.style.display = "none";
+  message.innerHTML = text;
+  setTimeout(anyway, 10000);
 }
 
-// "Anyways..." shared function
 function anyway() {
-  message.innerHTML = `<div class='fade-in'>Anyways, here’s the thing I want to tell you…</div>`;
+  message.innerHTML = "Anyways, here’s the thing I want to tell you…";
+  setTimeout(showBirthday, 10000);
+}
 
-  // Keep visible 10s then show final birthday
+function showBirthday() {
+  message.innerHTML = "";
+  const bd = document.createElement("div");
+  bd.id = "finalMessage";
+  bd.innerHTML = "Happy Birthday to my<br>Unbeloved Pirate King ❤️";
+  document.body.appendChild(bd);
+
   setTimeout(() => {
-    message.innerHTML = "";
-    showFinalBirthday();
+    bd.remove();
+    showPhoto();
   }, 10000);
 }
 
-// Show final Happy Birthday and postcard
-function showFinalBirthday() {
-  const finalDiv = document.createElement("div");
-  finalDiv.id = "finalMessage";
-  finalDiv.className = "fade-in";
-  finalDiv.innerHTML = "Happy Birthday to my<br>Unbeloved Pirate King ❤️";
-  document.body.appendChild(finalDiv);
+function showPhoto() {
+  const photo = document.getElementById("photoContainer");
+  photo.classList.remove("hidden");
 
-  // Confetti / hearts animation
-  setInterval(() => {
-    const emojis = ["🎉","🎊","💖","✨","🥳"];
-    const el = document.createElement("div");
-    el.className = "heart";
-    el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-    el.style.left = Math.random() * 100 + "vw";
-    el.style.fontSize = (5 + Math.random() * 4) + "vw";
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 5000);
-  }, 300);
-
-  // Keep Happy Birthday centered for 10 seconds
+  // hide photo after 2 mins
   setTimeout(() => {
-    // After 10s, move it left and show postcard
-    finalDiv.style.transform = "translate(-50%, -50%) scale(0.8)";
-    finalDiv.style.left = "20%";
-    finalDiv.style.opacity = "0.9";
-
-    // Show postcard
-    postcard.style.display = "block";
-    postcard.classList.add("show");
-  }, 10000); // 10s delay
+    photo.classList.add("hidden");
+    showAfterSong();
+  }, 120000);
 }
 
-// Event listeners
-yesBtn.addEventListener("click", () => {
-  continueToAnyway("I knew it, you are an idiot 😤 I hate you more than you do 😑");
-});
-noBtn.addEventListener("click", () => {
-  continueToAnyway("Don’t lie, I know you hate me, just admit it already 😏");
+function showAfterSong() {
+  const txt = document.getElementById("afterSong");
+  txt.classList.remove("hidden");
+
+  setTimeout(() => {
+    txt.classList.add("hidden");
+  }, 10000);
+}
+
+// hearts
+setInterval(() => {
+  const h = document.createElement("div");
+  h.className = "heart";
+  h.innerText = ["💙","✨","🎶","❤️"][Math.floor(Math.random()*3)];
+  h.style.left = Math.random() * 100 + "vw";
+  h.style.fontSize = Math.random() * 20 + 15 + "px";
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 6000);
+}, 500);
+
+// Final window flow
+music.addEventListener("ended", () => {
+  const miss = document.getElementById("missYou");
+  miss.classList.remove("hidden");
+  miss.classList.add("windowFlow");
+
+  document.querySelectorAll(".heart").forEach(h =>
+    h.classList.add("windowFlow")
+  );
+
+  setTimeout(() => miss.remove(), 5000);
 });
 </script>
+
 </body>
 </html>
-
