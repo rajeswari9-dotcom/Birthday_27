@@ -25,27 +25,56 @@ body {
   text-align: center;
 }
 
-/* Envelope */
+/* ===== ENVELOPE ===== */
 #envelope {
-  width: 260px;
-  height: 160px;
-  background: #f2b6c2;
-  border-radius: 12px;
-  cursor: pointer;
+  width: 280px;
+  height: 180px;
   position: relative;
+  cursor: pointer;
+  perspective: 1000px;
 }
-#envelope::before {
-  content: "";
+
+.env-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #f2b6c2;
+  border-radius: 18px;
+  z-index: 1;
+  top: 0;
+  left: 0;
+}
+
+.env-front {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 110px;
+  background: #eaa0b2;
+  border-radius: 0 0 18px 18px;
+  z-index: 2;
+}
+
+.env-flap {
   position: absolute;
   top: 0;
-  border-left: 130px solid transparent;
-  border-right: 130px solid transparent;
-  border-top: 80px solid #e59aaa;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 140px solid transparent;
+  border-right: 140px solid transparent;
+  border-bottom: 90px solid #d9899e;
+  transform-origin: bottom center;
+  transition: transform 1s ease;
+  z-index: 3;
 }
 
-#hint { margin-top: 12px; }
+.open .env-flap {
+  transform: rotateX(-180deg);
+}
 
-/* Message */
+
+/* ===== TEXT ===== */
 #message {
   max-width: 80%;
   font-size: 4vw;
@@ -55,8 +84,12 @@ body {
 .big { font-size: 6vw; }
 .small { font-size: 3.5vw; opacity: 0.7; }
 
-/* Buttons */
-#questionContainer { display: none; margin-top: 20px; }
+/* ===== QUESTION ===== */
+#questionContainer {
+  display: none;
+  margin-top: 20px;
+}
+
 .button {
   padding: 10px 18px;
   margin: 8px;
@@ -67,7 +100,7 @@ body {
   cursor: pointer;
 }
 
-/* Birthday */
+/* ===== BIRTHDAY ===== */
 #finalMessage {
   position: fixed;
   top: 50%;
@@ -77,7 +110,7 @@ body {
   z-index: 20;
 }
 
-/* Photo */
+/* ===== PHOTO ===== */
 .hidden { display: none; }
 
 #photoContainer {
@@ -87,21 +120,14 @@ body {
   transform: translate(-50%, -50%);
   z-index: 25;
 }
+
 #photoContainer img {
-  max-width: 180px;
-  width: 100%;
+  max-width: 200px;
   border-radius: 18px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-@media (min-width: 768px) {
-  #photoContainer img {
-    max-width: 240px;
-  }
-}
-
-
-/* After song text */
+/* ===== AFTER SONG ===== */
 #afterSong {
   position: fixed;
   top: 50%;
@@ -111,37 +137,46 @@ body {
   z-index: 30;
 }
 
-/* Hearts */
+/* ===== HEARTS ===== */
 .heart {
   position: fixed;
   bottom: -20px;
-  animation: float 6s linear infinite;
+  animation: float 6s linear forwards;
 }
+
 @keyframes float {
   to { transform: translateY(-120vh); opacity: 0; }
 }
 
-/* Window flow (final fade) */
-.windowFlow {
-  animation: flowRight 5s forwards;
+/* ===== DROP ENDING ===== */
+.drop {
+  animation: dropDown 2s forwards;
 }
 
-@keyframes flowRight {
+@keyframes dropDown {
   to {
-    transform: translateX(120px);
+    transform: translateY(120vh);
     opacity: 0;
   }
 }
 
-/* Miss you */
-#missYou {
+/* ===== BALLOON ===== */
+#balloon {
   position: fixed;
-  bottom: 20%;
+  bottom: -200px; /* start lower so tail is longer */
   left: 50%;
   transform: translateX(-50%);
-  font-size: 2vw;
-  opacity: 0.7;
-  z-index: 40;
+  font-size: 80px;
+  animation: flyUp 8s forwards; /* slower ascent for visual effect */
+  z-index: 50;
+}
+
+
+@keyframes flyUp {
+  to {
+    bottom: 120vh;
+    opacity: 0;
+  }
 }
 </style>
 </head>
@@ -149,7 +184,12 @@ body {
 <body>
 
 <div class="container">
-  <div id="envelope"></div>
+  <div id="envelope" onclick="openEnvelope()">
+    <div class="env-back"></div>
+    <div class="env-flap"></div>
+    <div class="env-front"></div>
+  </div>
+
   <div id="hint">Tap to open 💌</div>
   <div id="message"></div>
 
@@ -168,32 +208,37 @@ body {
 
 <div id="afterSong" class="hidden">
   You can have this song from now on,<br>
-  as I’m gonna hate this song from now on anyway.
+  I’m gonna hate it anyway.
 </div>
-
-<div id="missYou" class="hidden">I miss you</div>
 
 <script>
 const lines = [
   "To the boy who broke my heart 💔",
-  "I hope you become bald in the next 2 years 👿, so no one’s gonna marry you 😌",
+  "I hope you become bald in the next 2 years 👿 so no one’s gonna marry you 😌",
   "<div class='big'>I’m just kidding 🤪</div>",
   "<div class='small'>No, I’m not 🫩</div>"
 ];
 
 let i = 0;
+let heartInterval;
+
 const envelope = document.getElementById("envelope");
 const hint = document.getElementById("hint");
 const message = document.getElementById("message");
 const question = document.getElementById("questionContainer");
 const music = document.getElementById("music");
 
-envelope.onclick = () => {
-  envelope.style.display = "none";
-  hint.style.display = "none";
-  music.play();
-  showLine();
-};
+function openEnvelope() {
+  envelope.classList.add("open");
+
+  setTimeout(() => {
+    envelope.style.display = "none";
+    hint.style.display = "none";
+    music.play();
+    startHearts();
+    showLine();
+  }, 1000);
+}
 
 function showLine() {
   if (i >= lines.length) {
@@ -206,10 +251,10 @@ function showLine() {
 }
 
 document.getElementById("yesBtn").onclick = () =>
-  continueFlow("I knew it,idiot 😤I hate you more than you do ");
+  continueFlow("I knew it, idiot 😤 I hate you more than you do");
 
 document.getElementById("noBtn").onclick = () =>
-  continueFlow("Don’t lie, I know you hate me😒 just admit it already 😏");
+  continueFlow("Don’t lie 😒 I know you hate me just admit it 😏");
 
 function continueFlow(text) {
   question.style.display = "none";
@@ -239,7 +284,6 @@ function showPhoto() {
   const photo = document.getElementById("photoContainer");
   photo.classList.remove("hidden");
 
-  // hide photo after 2 mins
   setTimeout(() => {
     photo.classList.add("hidden");
     showAfterSong();
@@ -255,28 +299,32 @@ function showAfterSong() {
   }, 10000);
 }
 
-// hearts
-setInterval(() => {
-  const h = document.createElement("div");
-  h.className = "heart";
-  h.innerText = ["💙","✨","🎶","❤️"][Math.floor(Math.random()*3)];
-  h.style.left = Math.random() * 100 + "vw";
-  h.style.fontSize = Math.random() * 20 + 15 + "px";
-  document.body.appendChild(h);
-  setTimeout(() => h.remove(), 6000);
-}, 500);
+function startHearts() {
+  heartInterval = setInterval(() => {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.innerText = ["💙","✨","🎶","❤️"][Math.floor(Math.random()*4)];
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.fontSize = Math.random() * 20 + 15 + "px";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 6000);
+  }, 600);
+}
 
-// Final window flow
+/* FINAL END */
 music.addEventListener("ended", () => {
-  const miss = document.getElementById("missYou");
-  miss.classList.remove("hidden");
-  miss.classList.add("windowFlow");
+  clearInterval(heartInterval);
 
   document.querySelectorAll(".heart").forEach(h =>
-    h.classList.add("windowFlow")
+    h.classList.add("drop")
   );
 
-  setTimeout(() => miss.remove(), 5000);
+  setTimeout(() => {
+    const balloon = document.createElement("div");
+    balloon.id = "balloon";
+    balloon.innerText = "🎈";
+    document.body.appendChild(balloon);
+  }, 2000);
 });
 </script>
 
