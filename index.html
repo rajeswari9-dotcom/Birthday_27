@@ -1,5 +1,4 @@
-
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -8,21 +7,13 @@
 
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-/* Slow down hearts */
-.slow {
-  animation-duration: 12s !important;
-}
 
-/* Fall down together */
-.fall {
-  animation: fallDown 3s ease-in forwards !important;
-}
+/* Hearts and confetti fall animations */
+.slow { animation-duration: 12s !important; }
+.fall { animation: fallDown 2s ease-in forwards !important; }
 
 @keyframes fallDown {
-  to {
-    transform: translateY(120vh);
-    opacity: 0.8;
-  }
+  to { transform: translateY(0); bottom: 0; }
 }
 
 /* Ending envelope */
@@ -50,7 +41,7 @@
   background: #e9a1b1;
 }
 
-
+/* Body */
 body {
   background: #0b1d59;
   font-family: Georgia, serif;
@@ -58,7 +49,7 @@ body {
   color: white;
 }
 
-/* Center container */
+/* Container */
 .container {
   min-height: 100vh;
   display: flex;
@@ -68,7 +59,7 @@ body {
   text-align: center;
 }
 
-/* ===== ENVELOPE ===== */
+/* Envelope */
 #envelope {
   width: 260px;
   height: 160px;
@@ -88,7 +79,7 @@ body {
   height: 100%;
   clip-path: polygon(0 0, 50% 55%, 100% 0);
   background: #e9a1b1;
-  pointer-events: none; /* 🔑 THIS IS THE KEY */
+  pointer-events: none;
 }
 .env-flap {
   position: absolute;
@@ -101,48 +92,18 @@ body {
   transition: transform 1s ease;
   pointer-events: none;
 }
+#envelope.open .env-flap { transform: rotateX(180deg); }
 
-#envelope.open .env-flap {
-  transform: rotateX(180deg);
-}
+/* Text */
+#message { max-width: 80%; font-size: clamp(18px, 4vw, 28px); line-height: 1.6; }
+.big { font-size: clamp(26px, 6vw, 42px); }
+.small { font-size: clamp(14px, 3.5vw, 20px); opacity: 0.7; }
 
+/* Question */
+#questionContainer { display: none; margin-top: 20px; }
+.button { padding: 10px 18px; margin: 8px; background: #ff99b3; border: none; border-radius: 8px; font-size: clamp(14px, 4vw, 20px); cursor: pointer; }
 
-/* ===== TEXT ===== */
-#message {
-  max-width: 80%;
-  font-size: clamp(18px, 4vw, 28px);
-  line-height: 1.6;
-}
-
-
-.big {
-  font-size: clamp(26px, 6vw, 42px);
-}
-
-.small {
-  font-size: clamp(14px, 3.5vw, 20px);
-  opacity: 0.7;
-}
-
-
-/* ===== QUESTION ===== */
-#questionContainer {
-  display: none;
-  margin-top: 20px;
-}
-
-.button {
-  padding: 10px 18px;
-  margin: 8px;
-  background: #ff99b3;
-  border: none;
-  border-radius: 8px;
-  font-size: clamp(14px, 4vw, 20px);
-  cursor: pointer;
-}
-
-
-/* ===== BIRTHDAY ===== */
+/* Birthday message */
 #finalMessage {
   position: fixed;
   top: 50%;
@@ -152,10 +113,8 @@ body {
   z-index: 20;
 }
 
-
-/* ===== PHOTO ===== */
+/* Photo */
 .hidden { display: none; }
-
 #photoContainer {
   position: fixed;
   top: 50%;
@@ -163,14 +122,9 @@ body {
   transform: translate(-50%, -50%);
   z-index: 25;
 }
+#photoContainer img { max-width: 200px; border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-#photoContainer img {
-  max-width: 200px;
-  border-radius: 18px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-
-/* ===== AFTER SONG ===== */
+/* After song */
 #afterSong {
   position: fixed;
   top: 50%;
@@ -180,47 +134,30 @@ body {
   z-index: 30;
 }
 
-
-/* ===== HEARTS ===== */
-.heart {
+/* Hearts and confetti */
+.heart, .confetti {
   position: fixed;
   bottom: -20px;
-  animation: float 6s linear forwards;
+  user-select: none;
 }
-
-@keyframes float {
-  to { transform: translateY(-120vh); opacity: 0; }
+.heart { animation: float 6s linear forwards; font-size: 20px; }
+.confetti {
+  width: 10px;
+  height: 10px;
+  opacity: 0.8;
+  border-radius: 2px;
 }
+@keyframes float { to { transform: translateY(-120vh); opacity: 0; } }
 
-/* ===== DROP ENDING ===== */
-.drop {
-  animation: dropDown 2s forwards;
-}
-
-@keyframes dropDown {
-  to {
-    transform: translateY(120vh);
-    opacity: 0;
-  }
-}
-
-/* ===== BALLOON ===== */
-#balloon {
+/* Floor container to keep hearts/confetti */
+#floor {
   position: fixed;
-  bottom: -200px; /* start lower so tail is longer */
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 80px;
-  animation: flyUp 8s forwards; /* slower ascent for visual effect */
-  z-index: 50;
-}
-
-
-@keyframes flyUp {
-  to {
-    bottom: 120vh;
-    opacity: 0;
-  }
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  z-index: 10;
+  pointer-events: none;
 }
 </style>
 </head>
@@ -255,6 +192,9 @@ body {
   I’m gonna hate this song anyway.
 </div>
 
+<div id="endEnvelope"></div>
+<div id="floor"></div>
+
 <script>
 const lines = [
   "To the boy who broke my heart 💔",
@@ -265,21 +205,23 @@ const lines = [
 
 let i = 0;
 let heartInterval;
+const floatingElements = [];
 
 const envelope = document.getElementById("envelope");
 const hint = document.getElementById("hint");
 const message = document.getElementById("message");
 const question = document.getElementById("questionContainer");
 const music = document.getElementById("music");
+const floor = document.getElementById("floor");
+const endEnvelope = document.getElementById("endEnvelope");
 
 function openEnvelope() {
   envelope.classList.add("open");
-
   setTimeout(() => {
     envelope.style.display = "none";
     hint.style.display = "none";
     music.play();
-    startHearts();
+    startFloatingElements();
     showLine();
   }, 1000);
 }
@@ -291,12 +233,11 @@ function showLine() {
     return;
   }
   message.innerHTML = lines[i++];
-  setTimeout(showLine, 5000);
+  setTimeout(showLine, 10000); // 10s per line
 }
 
 document.getElementById("yesBtn").onclick = () =>
   continueFlow("I knew it, idiot 😤 I hate you more than you do");
-
 document.getElementById("noBtn").onclick = () =>
   continueFlow("Don’t lie 😒 I know you hate me just admit it 😏");
 
@@ -331,7 +272,7 @@ function showPhoto() {
   setTimeout(() => {
     photo.classList.add("hidden");
     showAfterSong();
-  }, 120000);
+  }, 120000); // 2 mins
 }
 
 function showAfterSong() {
@@ -340,49 +281,69 @@ function showAfterSong() {
 
   setTimeout(() => {
     txt.classList.add("hidden");
+    dropAllFloatingElements();
   }, 10000);
 }
 
-function startHearts() {
+// Create hearts and confetti
+function startFloatingElements() {
   heartInterval = setInterval(() => {
+    // Heart
     const h = document.createElement("div");
     h.className = "heart";
     h.innerText = ["💙","✨","🎶","❤️"][Math.floor(Math.random()*4)];
     h.style.left = Math.random() * 100 + "vw";
     h.style.fontSize = Math.random() * 20 + 15 + "px";
     document.body.appendChild(h);
-    setTimeout(() => h.remove(), 6000);
-  }, 600);
+    floatingElements.push(h);
+
+    // Confetti
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.backgroundColor = ['#ff5f7f','#ffe066','#6bf178','#6bc3ff','#d86bff'][Math.floor(Math.random()*5)];
+    document.body.appendChild(c);
+    floatingElements.push(c);
+
+    setTimeout(() => { if (h.style.position !== "absolute") h.remove(); if (c.style.position !== "absolute") c.remove(); }, 6000);
+  }, 500);
 }
 
-/* FINAL END */
+// Drop all hearts and confetti to floor
+function dropAllFloatingElements() {
+  clearInterval(heartInterval);
+  floatingElements.forEach((el, idx) => {
+    setTimeout(() => {
+      el.style.transition = "transform 1s ease, bottom 1s ease, left 1s ease";
+      el.style.position = "absolute";
+      el.style.bottom = "0px";
+      el.style.transform = "translateY(0)";
+      floor.appendChild(el);
+    }, idx * 150); // drop one by one
+  });
+
+  setTimeout(() => {
+    endEnvelope.style.display = "none";
+    const signOff = document.createElement("div");
+    signOff.id = "signOff";
+    signOff.style.position = "fixed";
+    signOff.style.top = "50%";
+    signOff.style.left = "50%";
+    signOff.style.transform = "translate(-50%, -50%)";
+    signOff.style.fontSize = "clamp(28px, 6vw, 48px)";
+    signOff.style.color = "#fff";
+    signOff.style.textAlign = "center";
+    signOff.style.zIndex = "110";
+    signOff.innerHTML = "To you, always 💌";
+    
+    document.body.appendChild(signOff);
+  }, floatingElements.length * 150 + 1000);
+}
+
 music.addEventListener("ended", () => {
   clearInterval(heartInterval);
-
-  const hearts = document.querySelectorAll(".heart");
-
-  /* Step 1: slow down */
-  hearts.forEach(h => h.classList.add("slow"));
-
-  /* Step 2: fall together */
-  setTimeout(() => {
-    hearts.forEach(h => {
-      h.style.animation = "none";
-      h.offsetHeight; // force reflow
-      h.classList.add("fall");
-    });
-  }, 2000);
-
-  /* Step 3: show closed envelope */
-  setTimeout(() => {
-    const endEnv = document.getElementById("endEnvelope");
-    endEnv.style.display = "block";
-  }, 4500);
 });
-
 </script>
-<div id="endEnvelope"></div>
-
 
 </body>
 </html>
